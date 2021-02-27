@@ -584,22 +584,22 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Eagerly cache singletons to be able to resolve circular references
-		// even when triggered by lifecycle interfaces like BeanFactoryAware.
+		// even when triggered by lifecycle interfaces like BeanFactoryAware.		// xjh 判断是否允许循环依赖
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
-			}
+			}// xjh第四次调用后置处理器，判断是否需要AOP
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			populateBean(beanName, mbd, instanceWrapper);
-			exposedObject = initializeBean(beanName, exposedObject, mbd);
+			populateBean(beanName, mbd, instanceWrapper);// xjh 属性填充，常常说的自动注入，在该方法里面会进行第五次与第六次后置处理器的调用
+			exposedObject = initializeBean(beanName, exposedObject, mbd);// xjh 初始化spring，在该方法里面会进行第七次与第八次后置处理器的调用
 		}
 		catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
